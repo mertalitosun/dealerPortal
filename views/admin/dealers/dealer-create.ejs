@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+    
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center">Bayi Kayıt</h4>
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="alert alert-danger">
+                <% errors.forEach(function(error) { %>
+                    <p><%= error.msg %></p>
+                <% }); %>
+            </div>
+        <% } %>
+        <form method="post">
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="firstName" class="form-label">Ad</label>
+                <input type="text" id="firstName" name="firstName"  class="form-control" required value="<%= typeof data !=="undefined" ? data.firstName : "" %>">
+            </div>
+    
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="lastName" class="form-label">Soyad</label>
+                <input type="text" id="lastName" name="lastName" class="form-control" required value="<%= typeof data !=="undefined"? data.lastName : "" %>">
+            </div>
+    
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="phone" class="form-label">Telefon</label>
+                <input type="tel" id="phone" name="phone"  class="form-control" required value="<%= typeof data !=="undefined"? data.phone : "" %>">
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="email" class="form-label">E-Posta</label>
+                <input type="email" id="email" name="email"  class="form-control" required value="<%= typeof data !=="undefined"? data.email : "" %>">
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="vkn" class="form-label">VKN</label>
+                <input type="text" id="vkn" name="vkn" min="0" class="form-control"   value="<%= typeof data !=="undefined"? data.vkn : "" %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="tsicilNO" class="form-label">Ticaret Sicil No</label>
+                <input type="text" id="tsicilNO" name="tsicilNO" min="0" class="form-control"  >
+            </div>
+
+            <div class="mb-3">
+                <label for="smmRoom" class="form-label">SMM Odası</label>
+                <input type="text" id="smmRoom" name="smmRoom" class="form-control"  >
+            </div>
+
+            <div class="mb-3">
+                <label for="smmRoomNumber" class="form-label">SMM Oda Numarası</label>
+                <input type="number" id="smmRoomNumber" name="smmRoomNumber" min="0" class="form-control"  >
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="dealerCommission" class="form-label">Bayi Komisyonu</label>
+                <input type="number" id="dealerCommission" name="dealerCommission" placeholder="Kendi müşterilerinden elde edeceği oran" class="form-control" required step="0.01" min="0" value="<%= typeof data !=="undefined" ? data.dealerCommission : "" %>">
+                <div class="form-text">Örnek: %20 için sadece 20 yazınız</div>
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="subDealerCommission" class="form-label">Alt Bayi Komisyonu</label>
+                <input type="number" id="subDealerCommission" name="subDealerCommission" placeholder="Alt bayilerin müşterilerinden elde edeceği oran" class="form-control" required step="0.01" min="0" value="<%= typeof data !=="undefined" ? data.subDealerCommission : "" %>">
+                <div class="form-text">Örnek: %20 için sadece 20 yazınız</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="referenceBy" class="form-label">Referans Bayi</label>
+                <select id="referenceBy" name="referenceBy" class="form-select">
+                    <option value="">Bir bayi seçin</option>
+                    <% dealers.forEach(dealer => { %>
+                        <option value="<%= dealer._id %>"><%= dealer.firstName + " " + dealer.lastName %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a href="/admin/dealers" class="btn btn-warning">Vazgeç</a>
+        </form>
+    </div>
+   </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+</body>
+</html>

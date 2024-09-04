@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center">Müşteri Kayıt</h4>
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="alert alert-danger">
+                <% errors.forEach(function(error) { %>
+                    <p><%= error.msg %></p>
+                <% }); %>
+            </div>
+        <% } %>
+        <form method="post">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Ad</label>
+                <input type="text" id="firstName" name="firstName" class="form-control" required value="<%= typeof data !=="undefined" ? data.firstName : customer.firstName %>">
+            </div>
+    
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Soyad</label>
+                <input type="text" id="lastName" name="lastName"  class="form-control" required value="<%= typeof data !=="undefined"? data.lastName : customer.lastName %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="tcVkn" class="form-label">TC/VKN</label>
+                <input type="text" id="tcVkn" name="tcVkn"  class="form-control" required value="<%= typeof data !=="undefined"? data.tcVkn : customer.tcVkn %>">
+            </div>
+    
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefon</label>
+                <input type="text" id="phone" name="phone"  class="form-control" required value="<%= typeof data !=="undefined"? data.phone : customer.phone %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="organization" class="form-label">Şirket</label>
+                <input type="text" id="organization" name="organization"  class="form-control" required value="<%= typeof data !=="undefined"? data.organization : customer.organization %>">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a href="/customer/details/<%= customer.customerCode %>" class="btn btn-warning">Vazgeç</a>
+        </form>
+    </div>
+   </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+
+</body>
+</html>

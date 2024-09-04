@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+    <script src="https://www.paytr.com/js/iframeResizer.min.js"></script>
+    <script>iFrameResize({},'#paytriframe');</script>
+</head>
+<body>
+
+    <div class="container my-3 ">
+        <img src="/static/img/wnew.png" alt="Logo" class="img-fluid" style="width: 100px; height: 50px;">
+        <h4 class="text-center">Sipariş Ödeme Sayfası</h4>
+        <% if (paymentLink && paymentLink.isActive == "true") { %>
+            <form method="post">
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="nameSurname" class="form-label">Ad-Soyad/Unvan</label>
+                    <input type="text" id="nameSurname" name="nameSurname"  class="form-control" required >
+                </div>
+        
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="tckn" class="form-label">TC/VKN</label>
+                    <input type="text" id="tckn" name="tckn" class="form-control" required >
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="address" class="form-label">Adres</label>
+                    <input type="text" id="address" name="address"  class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="email" class="form-label">E-posta</label>
+                    <input type="email" id="email" name="email" class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="city" class="form-label">İl</label>
+                    <input type="text" id="city" name="city"  class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="subcity" class="form-label">İlçe</label>
+                    <input type="text" id="subcity" name="subcity"  class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="taxOffice" class="form-label">Vergi Dairesi</label>
+                    <input type="text" id="taxOffice" name="taxOffice"  class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <span class="required">*</span>
+                    <label for="phone" class="form-label">Telefon Numarası</label>
+                    <input type="text" id="phone" name="phone"  class="form-control">
+                </div>
+    
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Not</label>
+                    <input type="text" id="description" name="description"  class="form-control">
+                </div>
+    
+                <div class="mb-3">
+                    <input type="hidden" id="amount" name="amount" value="<%=  paymentLink.totalAmount %>">
+                    <input type="hidden" id="piece" name="piece" value="<%=  paymentLink.purchase.piece ? paymentLink.piece : 1 %>">
+                    <input type="hidden" id="link" name="link" value="<%=  paymentLink.processId %>">
+                    <input type="hidden" id="productType" name="productType" value="<%=  paymentLink.purchase.type %>">
+                    <input type="hidden" id="dealerId" name="dealerId" value="<%=  paymentLink.purchase.customer.addedBy._id %>">
+                </div>
+                <div class="mb-3">
+                    <input type="checkbox" name="privacyPolicy" id="privacyPolicy">
+                    <label for="privacyPolicy"><a href="/static/contracts/Gizlilik_Politikasi.pdf" target="_blank">Gizlilik Politikası</a> ve <a href="/static/contracts/Kullanici_Uyelik_Sozlesmesi.pdf" target="_blank">Kullanıcı Sözleşmesi'ni </a>okudum, anladım, kabul ediyorum.</label>
+                </div>
+                <button type="button" class="btn btn-primary" id="paymentStep" onclick="getToken()">Ödeme Adımına Geç</button>
+            </form>
+        <% }else{ %>
+            <div class="alert alert-danger mt-5" role="alert">
+                Geçersiz Ödeme Linki
+            </div>
+        <% } %>
+        <div id="payment_paytr"></div>
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    
+    <script>
+         const paymentStep = document.getElementById("paymentStep");
+        const privacyPolicy = document.getElementById("privacyPolicy");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateButtonState();
+        });
+
+        privacyPolicy.addEventListener('change', () => {
+            updateButtonState();
+        });
+
+        const updateButtonState = () =>  {
+            paymentStep.disabled = !privacyPolicy.checked;
+        }
+
+
+        function getToken() {
+        const formData = {
+            "tckn": document.getElementById('tckn').value,
+            "email": document.getElementById('email').value,
+            "nameSurname": document.getElementById('nameSurname').value,
+            "address": document.getElementById('address').value,
+            "phone": document.getElementById('phone').value,
+            "amount": document.getElementById('amount').value,
+            "piece": document.getElementById('piece').value,
+            "description": document.getElementById('description').value,
+            "taxOffice": document.getElementById('taxOffice').value,
+            "city": document.getElementById('city').value,
+            "subcity": document.getElementById('subcity').value,
+            "link": document.getElementById('link').value,
+            "productType": document.getElementById('productType').value,
+            "dealerId": document.getElementById('dealerId').value,
+        }
+       
+        for (const key in formData) {
+            if (key !== "description" && formData[key] === "") {
+                alert("Lütfen Zorunlu Alanları Doldurunuz!");
+                return;
+            }
+        }
+
+        // formData.append('tckn', document.getElementById('tckn').value);
+        // formData.append('email', document.getElementById('email').value);
+        // formData.append('nameSurname', document.getElementById('nameSurname').value);
+        // formData.append('address', document.getElementById('address').value);
+        // formData.append('phone', document.getElementById('phone').value);
+        // formData.append('amount', document.getElementById('amount').value);
+        // formData.append('piece', document.getElementById('piece').value);
+        // formData.append('description', document.getElementById('description').value);
+        // formData.append('taxOffice', document.getElementById('taxOffice').value);
+        // formData.append('city', document.getElementById('city').value);
+        // formData.append('subcity', document.getElementById('subcity').value);
+
+
+        fetch('/paytr_payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            }).then(response => response.json())
+            .then(data => {
+                console.log("token",data.token)
+                let iframe = `<iframe src="https://www.paytr.com/odeme/guvenli/${data.token}" id="paytriframe" frameborder="0" scrolling="no" style="width: 100%;"></iframe>`;
+                document.getElementById('payment_paytr').innerHTML = iframe;
+                iFrameResize({}, '#paytriframe');
+            })
+            .catch((error) => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

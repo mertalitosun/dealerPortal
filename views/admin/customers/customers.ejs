@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Müşteri Listesi</h4>
+        
+        <div class="d-flex justify-content-between">
+            <div>
+                <input type="text" id="searchInput" class="form-control" placeholder="Ara...">
+            </div>
+            <a href="/customer/create" class="btn customerAdd">Müşteri Ekle <i class="bi bi-plus-circle"></i></a>
+        </div>
+        <hr>
+        
+        <div class="dealers-content mt-3 table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th>Kod</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Telefon</th>
+                    <th>Şirket</th>
+                    <th>Bayi</th>
+                    <th>Detay</th>
+                </thead>
+                <tbody id="tableBody">
+                    <% customers.forEach(customer => { %>
+                        <tr>
+                            <td><%= customer.customerCode %></td>
+                            <td><%= customer.firstName %></td>
+                            <td><%= customer.lastName %></td>
+                            <td><%= customer.phone %></td>
+                            <td><%= customer.organization %></td>
+                            <td><a href="/admin/dealer/details/<%= customer.addedBy.dealerCode %>"><%= customer.addedBy.firstName %> <%= customer.addedBy.lastName %></a></td>
+                        
+                            <td><a href="/customer/details/<%= customer.customerCode %>" class="review"><i class="bi bi-search"></i> İncele</a></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        
+        <%- include('../../partials/pagination') %>
+       
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+               var filter = document.getElementById('searchInput').value.toLowerCase();
+
+               fetch(`/admin/customers?query=${filter}`)
+                   .then(response => response.json())
+                   .then(data => {
+                       var tbody = document.getElementById('tableBody');
+                       tbody.innerHTML = '';
+   
+                       data.customers.forEach(customer => {
+                           var row = document.createElement('tr');
+                           row.innerHTML = `
+                            <td>${customer.customerCode}</td>
+                            <td>${customer.firstName}</td>
+                            <td>${customer.lastName}</td>
+                            <td>${customer.phone}</td>
+                            <td>${customer.organization}</td>
+                            <td><a href="/admin/dealer/details/${customer.addedBy.dealerCode}">${customer.addedBy.firstName} ${customer.addedBy.lastName}</a></td>
+                            <td><a href="/customer/details/${customer.customerCode}" class="review"><i class="bi bi-search"></i> İncele</a></td>
+                           `;
+                           tbody.appendChild(row);
+                       });
+                   })
+                   .catch(error => console.error('Error:', error));
+           });
+    </script>
+</body>
+</html>

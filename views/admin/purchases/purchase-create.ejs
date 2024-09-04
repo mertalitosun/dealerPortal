@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center mb-5">Sipariş Kayıt</h4>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="dealerSelect" class="form-label">Bayi</label>
+                        <select id="dealerSelect" name="dealerSelect" class="form-select" required>
+                            <option value="">Bir bayi seçin</option>
+                            <% dealers.forEach(dealer => { %>
+                                <option value="<%= dealer._id %>"><%= dealer.firstName + " " + dealer.lastName %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="customerSelect" class="form-label">Müşteri</label>
+                        <select id="customerSelect" name="customerSelect" class="form-select" required>
+                            <option value="">Bir müşteri seçin</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Fiyat</label>
+                        <input type="number" id="price" name="price"  class="form-control" step="0.01" min="0">
+                    </div>
+                </div> -->
+            </div>
+    
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="productSelect" class="form-label">Ürün</label>
+                        <select id="productSelect" name="productSelect" class="form-select" required>
+                            <option value="">Bir ürün seçin</option>
+                            <% products.forEach(product => { %>
+                                <option value="<%= product._id %>" data-price="<%= product.price %>" data-type="<%= product.type.name %>"><%= product.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="purchaseDate" class="form-label">Satın Alma Tarihi</label>
+                        <input type="date" id="purchaseDate" name="purchaseDate" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6" id="priceSection" style="display: none;">
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Fiyat</label>
+                        <input type="number" id="price" name="price" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="col-md-6" id="integratorSection" style="display: none;">
+                    <div class="mb-3">
+                        <label for="integrator" class="form-label">Entegratör</label>
+                        <select id="integrator" name="integrator" class="form-select" required>
+                            <option value="">Bir Entegratör seçin</option>
+                            <% integrators.forEach(integrator => { %>
+                                <option value="<%= integrator.name %>"><%= integrator.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6" id="pieceSection" style="display: none;">
+                    <div class="mb-3">
+                        <label for="piece" class="form-label">Adet</label>
+                        <input type="number" id="piece" name="piece" class="form-control" step="1" min="1">
+                    </div>
+                </div>
+                <div class="col-md-6" id="giftRateSection" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="giftRate" class="form-label">Hediye Oranı</label>
+                                <input type="number" id="giftRate" name="giftRate" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="giftPiece" class="form-label">Hediye Miktarı</label>
+                                <input type="number" id="giftPiece" name="giftPiece" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+                
+            
+            <div class="totalPiece mb-3"></div>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a href="/admin/purchases" class="btn btn-warning">Vazgeç</a>
+        </form>
+    </div>
+   </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+
+        function getFirstDayOfMonth() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            return `${year}-${month}-01`;
+        }
+
+        const purchaseDateInput = document.getElementById("purchaseDate");
+        // purchaseDateInput.setAttribute("max", getTodayDate());
+        // purchaseDateInput.setAttribute("min", getFirstDayOfMonth());
+        purchaseDateInput.value = getTodayDate();
+
+        // const product = document.getElementById("productSelect");
+        // const productPrice = document.getElementById("price");
+
+        // product.addEventListener("change", () => {
+        //     const selectedOption = product.options[product.selectedIndex];
+        //     const price = selectedOption.getAttribute("data-price");
+        //     productPrice.value = price;
+        // });
+
+
+        //customer
+        const dealerSelect = document.getElementById("dealerSelect");
+        const customerSelect = document.getElementById("customerSelect");
+        dealerSelect.addEventListener("change", () => {
+            customerSelect.innerHTML = "";
+            const defaultOption = document.createElement('option');
+            defaultOption.innerText = "Bir müşteri seçin"
+            defaultOption.value=""
+            customerSelect.appendChild(defaultOption);
+            const dealerId = dealerSelect.value;
+            fetch(`/api/dealer/customers/${dealerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer._id;
+                        option.textContent = `${customer.firstName} ${customer.lastName}`;
+                        customerSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <script>
+        const productSelect = document.getElementById("productSelect");
+        const priceSection = document.getElementById("priceSection");
+        const pieceSection = document.getElementById("pieceSection");
+        const integratorSection = document.getElementById("integratorSection");
+        const giftRateSection = document.getElementById("giftRateSection");
+        const priceInput = document.getElementById("price");
+        const pieceInput = document.getElementById("piece");
+        const integratorSelect = document.getElementById("integrator");
+        const giftRateInput = document.getElementById("giftRate");
+        const giftPieceInput = document.getElementById("giftPiece");
+        const totalPiece = document.querySelector(".totalPiece");
+
+     
+        productSelect.addEventListener("change", () => {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const productType = selectedOption.getAttribute("data-type");
+     
+            priceSection.style.display = "none";
+            pieceSection.style.display = "none";
+            integratorSection.style.display = "none";
+            giftRateSection.style.display = "none";
+     
+            priceInput.removeAttribute("required");
+            pieceInput.removeAttribute("required");
+            integratorSelect.removeAttribute("required");
+            giftRateInput.removeAttribute("required");
+            giftPieceInput.removeAttribute("required");
+     
+            if (productType === "Kontör") {
+                priceSection.style.display = "block"; 
+                pieceSection.style.display = "block"; 
+                integratorSection.style.display = "block"; 
+                giftRateSection.style.display = "block"; 
+                pieceInput.setAttribute("required", "true");
+                priceInput.setAttribute("required", "true");
+                integratorSelect.setAttribute("required", "true");
+              
+            } else {
+                priceSection.style.display = "block"; 
+                priceInput.setAttribute("required", "true");
+            }
+           
+            pieceInput.addEventListener("input",()=>{
+                totalPiece.innerHTML=""
+                totalPiece.innerHTML = `<span>Toplam Kontör: <b>${Math.round(pieceInput.value)}</b> adet</span>`
+            })
+
+            giftRateInput.addEventListener("input", () => {
+                totalPiece.innerHTML=""
+
+                if (giftRateInput.value) {
+                    giftPieceInput.setAttribute("disabled", "true");
+                    giftPieceInput.value = "";
+
+                    const total = parseInt(pieceInput.value) + ((parseInt(giftRateInput.value) / 100 ) * parseInt(pieceInput.value))
+                    totalPiece.innerHTML = `<span>Toplam Kontör: <b>${Math.round(total)}</b> adet</span>`
+                } else {
+                    totalPiece.innerHTML = `<span>Toplam Kontör: <b>${Math.round(pieceInput.value)}</b> adet</span>`
+                    giftPieceInput.removeAttribute("disabled");
+                }
+            });
+
+            giftPieceInput.addEventListener("input", () => {
+                totalPiece.innerHTML=""
+                if (giftPieceInput.value) {
+                    giftRateInput.setAttribute("disabled", "true");
+                    giftRateInput.value = "";
+                    const total = parseInt(pieceInput.value) + parseInt(giftPieceInput.value)
+
+                    totalPiece.innerHTML = `<span>Toplam Kontör: <b>${Math.round(total)}</b> adet</span>`
+                } else {
+                    totalPiece.innerHTML = `<span>Toplam Kontör: <b>${Math.round(pieceInput.value)}</b> adet</span>`
+                    giftRateInput.removeAttribute("disabled");
+                }
+            });
+        });
+     </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<div class="dealers-details-content p-5">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-end">
+            <a href="/admin/dealer/edit/<%= dealer.dealerCode %>" class="btn edit"><i class="bi bi-pencil-square"></i> Düzenle </a>
+        </div>
+    </div>
+    <div class="row dealer-profile-details">
+        <div class="col-12 col-md-4 profile-details">
+            <ul>
+                <li><b>Bayi Kodu:</b> <%= dealer.dealerCode %></li>
+                <li><b>Ad:</b> <%= dealer.firstName %></li>
+                <li><b>Soyad:</b> <%= dealer.lastName %></li>
+                <li><b>Telefon:</b> <%= dealer.phone %></li>
+                <li><b>E-Posta:</b> <%= dealer.email %></li>
+                <li><b>VKN:</b> <%= dealer.vkn %></li>
+                <li><b>Ticaret Sicil No:</b> <%= dealer.tsicilNo ? dealer.tsicilNo : "-"  %></li>
+                <li><b>Sözleşme:</b> <span class="<%= dealer.isContract ? "text-success" : "text-danger" %>"><%= dealer.isContract ? "İmzalandı" : "İmzalanmadı" %></span></li>
+                <% if (isAdmin) { %>
+                    <% if (dealer.referenceBy) { %>
+                        <li><b>Referans Bayi:</b> <a href="/admin/dealer/details/<%= dealer.referenceBy.dealerCode %>"><%= dealer.referenceBy.firstName + " " + dealer.referenceBy.lastName %></a></li>
+                    <% } %>
+                <% } %>
+                <li><a href="/dealer/documents/<%= dealer._id %>">Evraklar</a></li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-8 d-flex flex-column justify-content-around">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="title"><b>Durum</b></div>
+                    <% if (dealer.status) { %>
+                        <div><span class="status active-status">Aktif</span></div>
+                    <% }else{ %>
+                        <div><span class="status inActive-status">Pasif - <% const date = new Date(dealer.deactivatedAt); %>
+                            <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %></span></div>
+                    <% } %>
+                    
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>Durum Açıklaması</b></div>
+                    <div><%= dealer.statusDescription %></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>Rol/Roller</b></div>
+                    <div>
+                        <% dealer.roles.forEach(role => { %>
+                            <li><%= role.name == "dealer" ? "Bayi" : role.name == "subDealer" ? "Alt Bayi" : ""%></li>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="title"><b>(%) Bayi Komisyon Oranı</b></div>
+                    <div>%<%= dealer.dealerCommission %></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>(%) Alt Bayi Komisyon oranı</b></div>
+                    <div>%<%= dealer.subDealerCommission %></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>(₺) Bayi Müşterileri Hakediş</b></div>
+                    <div>₺<%= monthlyTotal %></div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="title"><b>SMM Odası</b></div>
+                    <div><%= dealer.smmRoom %></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>SMM Oda Numarası</b></div>
+                    <div><%= dealer.smmRoomNumber %></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="title"><b>(₺) Alt Bayi Müşterileri Hakediş</b></div>
+                    <div>₺<%= monthlySubTotal %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

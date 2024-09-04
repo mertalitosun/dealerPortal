@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Satışlar</h4>
+        
+        <div class="dealers-content mt-3 table-responsive">
+            <div class="">
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <form id="filterForm" method="get" action="/user/purchases">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                                    <input type="date" id="startDate" name="startDate" class="form-control">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                                    <input type="date" id="endDate" name="endDate" class="form-control">
+                                </div>
+                                <div class="col-md-4 mb-3 d-flex align-items-end justify-content-around">
+                                    <button type="submit" class="btn btn-danger">Filtrele</button>
+                                    <a href="/user/purchases" class="btn btn-primary">Sıfırla</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-4 d-flex align-items-center justify-content-center">
+                        <div class="">
+                            <a href="/user/purchase/create" class="btn customerAdd">Sipariş Oluştur <i class="bi bi-plus-circle"></i></a>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <a href="" class="iban btn btn-info text-light">Havale yap</a>
+            </div>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <th>Durum</th>
+                    <th>Ödeme Durumu</th>
+                    <th>Kod</th>
+                    <th>Hizmet</th>
+                    <th>Satın Alma Tarihi</th>
+                    <th>Müşteri</th>
+                    <th>Ödeme Linki</th>
+                </thead>
+                <tbody id="tableBody">
+                    <% let purchaseId = null %>
+                    <% purchases.forEach(purchase => { %>
+                        <tr>
+                            <td>
+                                <span class="status 
+                                    <%= purchase.status == "Onay Bekliyor" ? "bg-warning" :
+                                        purchase.status == "Onaylandı" ? "bg-info" :
+                                        purchase.status == "İşlemde" ? "bg-primary" :
+                                        purchase.status == "Tamamlandı" ? "bg-success" :
+                                        purchase.status == "İptal Edildi" ? "bg-secondary" :
+                                        purchase.status == "İade Edildi" ? "bg-danger" :
+                                        "bg-secondary" %>">
+                                    <%= purchase.status %>
+                                </span>
+                            </td>
+
+                            <td>
+                                <% if (purchase.paymentStatus) { %>
+                                    <% if (purchase.paymentStatus == "Success") { %>
+                                        <span>Ödeme Başarılı</span>
+                                      <% } else if (purchase.paymentStatus == "Fail") { %>
+                                        <span>Ödeme Başarısız</span>
+                                      <% } else if (purchase.paymentStatus == "Payment send.") { %>
+                                        <span>Ödeme Bekleniyor</span>
+                                      <% } else if (purchase.paymentStatus == "transfer expected") { %>
+                                        <span>Havale Bekleniyor</span>
+                                      <% } else if (purchase.paymentStatus == "transfer failed") { %>
+                                        <span>Havale Başarısız</span>
+                                      <% } else { %>
+                                        <span>-</span>
+                                      <% } %>
+                                      
+                                <% }else { %>
+                                    -
+                                <% } %>
+
+                            </td>
+
+                            <td><%= purchase.purchaseCode %></td>
+                            <td><%= purchase.name %></td>
+                            <td>
+                                <% const date = new Date(purchase.purchaseDate); %>
+                                <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %>
+                            </td>
+                            <td><a href="/customer/details/<%= purchase.customer.customerCode %>"><%= purchase.customer.firstName %> <%= purchase.customer.lastName %></a></td>
+                           
+                            <td>
+                                <% let latestActiveLink = null; %>
+                                <% let foundActiveLink = false; %>
+                                <% links.forEach(link => { %>
+                                    <% if (link.purchase.toString() === purchase._id.toString() && link.isActive === "true") { %>
+                                        <% if (!foundActiveLink || (latestActiveLink && link.createdAt > latestActiveLink.createdAt)) { %>
+                                            <% latestActiveLink = link; %>
+                                            <% foundActiveLink = true; %>
+                                        <% } %>
+                                    <% } %>
+                                <% }) %>
+                                <% if (foundActiveLink) { %>
+                                    <a href="<%= latestActiveLink.link %>">Linke Git</a>
+                                <% } else { %>
+                                    <a href="/payment-link-create?purchaseId=<%=purchase._id %>">Link Oluştur</a>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <div class="modal" tabindex="-1" id="paymentModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <i class="bi bi-x-lg  ms-auto me-auto mt-3" style="color: red; font-size: 70px;"></i>
+                    <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+                    <p>Birden fazla ödeme linki oluşturulamaz</p>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <% if (isAdmin) { %>
+                            <a href="/admin/purchases" class="btn btn-primary">Ok</a>
+                        <% } %>
+                        <% if (isDealer) { %>
+                            <a href="/user/purchases" class="btn btn-primary">Ok</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- iban-modal -->
+        <div class="modal fade" id="ibanModal" tabindex="-1" aria-labelledby="ibanModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ibanModalLabel">IBAN Bilgileri</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        IBAN: TR123456789012345678901234
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal" tabindex="-1" id="paymentModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <i class="bi bi-check-circle ms-auto me-auto mt-3" style="color: green; font-size: 70px;"></i>
+                    <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+                    <h2 class="my-3">Link Oluşturuldu!</h2>
+                    <p>Ödeme linkini kaybetmeyiniz 24 saat geçerlidir.</p>
+                    <p id="paymentLink"></p>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <% if (isAdmin) { %>
+                            <a href="/admin/purchases" class="btn btn-primary">Ok</a>
+    
+                        <% } %>
+                        <% if (isDealer) { %>
+                            <a href="/user/purchases" class="btn btn-primary">Ok</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        <%- include('../../partials/pagination') %>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <!-- <script>
+        const showModal = () => {
+            new bootstrap.Modal(document.getElementById("paymentModal")).show();
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const link = urlParams.get('isActive');
+       
+        if (link) {
+            showModal();
+        }
+
+      
+    </script> -->
+    <script>
+        document.querySelector('a.iban').addEventListener('click', event => {
+            event.preventDefault();
+            new bootstrap.Modal(document.getElementById('ibanModal')).show();
+        });
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a[href*="/payment-link-create"]').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    event.preventDefault(); 
+    
+                    const purchaseId = new URL(event.target.href).searchParams.get('purchaseId');
+    
+                    try {
+                        const response = await fetch(`/payment-link-create?purchaseId=${purchaseId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+    
+                        const data = await response.json();
+    
+                        if (data.success) {
+                            document.getElementById('paymentLink').innerHTML = `<a href="${data.link}" target="_blank">${data.link}</a>`;
+                            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+                        } else {
+                            alert(data.message || 'Bir hata oluştu.');
+                        }
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        alert('Bir hata oluştu.');
+                    }
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>

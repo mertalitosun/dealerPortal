@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <h4 class="text-center ">Ödeme İşlemleri</h4>
+
+    <div class=" mt-5">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <form id="filterForm" method="get" action="/payment-transactions">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="status" class="form-label">Durum</label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="">Tüm Durumlar</option>
+                                <option value="Success">Success</option>
+                                <option value="Payment send.">Payment send.</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3 d-flex align-items-end justify-content-around">
+                            <button type="submit" class="btn btn-danger">Filtrele</button>
+                            <a href="/payment-transactions" class="btn btn-primary">Sıfırla</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-md-4 d-flex justify-content-center align-items-center">
+                <div class="">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Ad / Telefon / E-posta">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="container mt-3 table-responsive">
+        <table class="table table-hover mt-5">
+            <thead>
+                <tr>
+                    <th>TARIH</th>
+                    <th>AD SOYAD</th>
+                    <th>TELEFON</th>
+                    <th>E-POSTA</th>
+                    <th>TCKN/VKN</th>
+                    <th>URUN</th>
+                    <th>ADET</th>
+                    <th>FIYAT</th>
+                    <th>DURUM</th>
+                    <th>ACIKLAMA</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <% let transActions = null %>
+                <% if (isAdmin) { %>
+                    <% transActions = paymentTransactions %>
+                <% } %>
+                
+                <% if (isDealer) { %>
+                    <% transActions = dealerPaymentTransactions %>
+                <% } %>
+               
+                <% if (transActions) { %>
+                    <% transActions.forEach(paymentTransaction => { %>
+                        <tr>
+                            <td>
+                                <% const createdAt = new Date(paymentTransaction.createdAt) %>
+                                <%= createdAt.getDate().toString().padStart(2, "0") %>/<%= (createdAt.getMonth() + 1).toString().padStart(2, "0") %>/<%= createdAt.getFullYear() %>
+                            </td>
+                            <td><%= paymentTransaction.fullName %></td>
+                            <td><%= paymentTransaction.phone %></td>
+                            <td><%= paymentTransaction.email %></td>
+                            <td><%= paymentTransaction.tcVkn %></td>
+                            <td><%= paymentTransaction.salesId.name %></td>
+                            <td><%= paymentTransaction.piece %></td>
+                            <td><%= paymentTransaction.totalAmount %></td>
+                            <td><%= paymentTransaction.status %></td>
+                            <td><%= paymentTransaction.not ? paymentTransaction.not : "-" %></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('../../partials/pagination') %>
+   </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            var filter = document.getElementById('searchInput').value.toLowerCase();
+
+            fetch(`/payment-transactions?query=${filter}`)
+                .then(response => response.json())
+                .then(data => {
+                    var tbody = document.getElementById('tableBody');
+                    tbody.innerHTML = '';
+
+                    data.paymentTransactions.forEach(paymentTransaction => {
+                        var row = document.createElement('tr');
+                        var createdAt = new Date(paymentTransaction.createdAt);
+                        row.innerHTML = `
+                            <td>
+                                ${createdAt.getDate().toString().padStart(2, "0")}/${(createdAt.getMonth() + 1).toString().padStart(2, "0")}/${createdAt.getFullYear()}
+                            </td>
+                            <td>${paymentTransaction.fullName}</td>
+                            <td>${paymentTransaction.phone}</td>
+                            <td>${paymentTransaction.email}</td>
+                            <td>${paymentTransaction.tcVkn}</td>
+                            <td>${paymentTransaction.salesId.name}</td>
+                            <td>${paymentTransaction.piece}</td>
+                            <td>${paymentTransaction.totalAmount}</td>
+                            <td>${paymentTransaction.status}</td>
+                            <td>${paymentTransaction.not ? paymentTransaction.not : "-"}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

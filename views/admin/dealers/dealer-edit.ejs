@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center">Bayi Güncelle</h4>
+        <form method="post">
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="firstName" class="form-label">Ad</label>
+                <input type="text" id="firstName" name="firstName" class="form-control" required value="<%= dealer.firstName %>">
+            </div>
+    
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="lastName" class="form-label">Soyad</label>
+                <input type="text" id="lastName" name="lastName" class="form-control" required value="<%= dealer.lastName %>">
+            </div>
+    
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="phone" class="form-label">Telefon</label>
+                <input type="text" id="phone" name="phone"  class="form-control" required value="<%= dealer.phone %>">
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="email" class="form-label">E-Posta</label>
+                <input type="email" id="email" name="email"  class="form-control" required value="<%=  dealer.email %>">
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="vkn" class="form-label">VKN</label>
+                <input type="text" id="vkn" name="vkn" min="0" class="form-control"  required value="<%= dealer.vkn%>">
+            </div>
+
+            <div class="mb-3">
+                <label for="tsicilNO" class="form-label">Ticaret Sicil No</label>
+                <input type="text" id="tsicilNO" name="tsicilNO" min="0" class="form-control"  value="<%= dealer.tsicilNo %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="smmRoom" class="form-label">SMM Odası</label>
+                <input type="text" id="smmRoom" name="smmRoom"  class="form-control"  value="<%=  dealer.smmRoom %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="smmRoomNumber" class="form-label">SMM Oda Numarası</label>
+                <input type="text" id="smmRoomNumber" name="smmRoomNumber"  class="form-control"  value="<%= dealer.smmRoomNumber %>">
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="dealerCommission" class="form-label">Bayi Komisyonu</label>
+                <input type="number" id="dealerCommission" name="dealerCommission" placeholder="Kendi müşterilerinden elde edeceği oran" class="form-control" required step="0.01" value="<%=  dealer.dealerCommission %>">
+                <div class="form-text">Örnek: %20 için sadece 20 yazınız</div>
+            </div>
+
+            <div class="mb-3">
+                <span class="required">*</span>
+                <label for="subDealerCommission" class="form-label">Alt Bayi Komisyonu</label>
+                <input type="number" id="subDealerCommission" name="subDealerCommission" placeholder="Alt bayilerin müşterilerinden elde edeceği oran" class="form-control" required step="0.01" value="<%=  dealer.subDealerCommission %>">
+                <div class="form-text">Örnek: %20 için sadece 20 yazınız</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="referenceBy" class="form-label">Referans Bayi</label>
+                <select id="referenceBy" name="referenceBy" class="form-select">
+                    <option value="">Bir bayi seçiniz</option>
+    
+                    <% dealers.forEach(d => { %>
+                        <option value="<%= d._id %>" <%= dealer.referenceBy && dealer.referenceBy._id.toString() === d._id.toString() ? "selected" : "" %>>
+                            <%= d.firstName + " " + d.lastName %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="status" class="form-label">Bayi Aktiflik Durumu</label>
+                <div class="d-flex justify-content-around" style="max-width: 200px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="active-status" value="true" <%= dealer.status ? 'checked' : '' %>>
+                        <label class="form-check-label status active-status" for="active-status">
+                            Aktif
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="inActive-status" value="false" <%= !dealer.status ? 'checked' : '' %>>
+                        <label class="form-check-label status inActive-status" for="inActive-status">
+                            Pasif
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input class="form-check-input" type="checkbox" id="isContract" name="isContract" <%= dealer.isContract ? 'checked' : '' %> >
+                <label class="form-check-label" for="isContract">
+                    Sözleşme İmzalandı
+                </label>
+            </div>
+
+
+            <div class="mb-3" id="statusDescriptionArea">
+                <label for="statusDescription" class="form-label">Bayilik Pasif Olma Nedeni</label>
+                <input type="text" id="statusDescription" name="statusDescription" placeholder="Bayilik pasif olma nedeni yazınız" class="form-control" value="<%= dealer.statusDescription %>">
+            </div>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a href="/admin/dealer/details/<%= dealer.dealerCode %>" class="btn btn-warning">Vazgeç</a>
+        </form>
+    </div>
+   </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        const active = document.getElementById("active-status");
+        const inActive = document.getElementById("inActive-status");
+        const statusDescriptionArea = document.getElementById("statusDescriptionArea");
+
+        document.addEventListener("DOMContentLoaded",()=>{
+            if(active.checked){
+                statusDescriptionArea.style.display="none"
+            }else{
+                statusDescriptionArea.style.display="block"
+
+            }
+            inActive.addEventListener("click",()=>{
+                statusDescriptionArea.style.display="block"
+            })
+            active.addEventListener("click",()=>{
+                statusDescriptionArea.style.display="none"
+            })
+        })
+    </script>
+</body>
+</html>

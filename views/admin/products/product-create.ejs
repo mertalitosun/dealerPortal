@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center">Ürün Ekle</h4>
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="alert alert-danger">
+                <% errors.forEach(function(error) { %>
+                    <p><%= error.msg %></p>
+                <% }); %>
+            </div>
+        <% } %>
+        <form method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">Ürün Adı</label>
+                <input type="text" id="name" name="name"  class="form-control" required value="<%= typeof data !=="undefined" ? data.name : "" %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Ürün Tipi</label>
+                <select id="type" name="type" class="form-select">
+                    <option value="">Ürün tipi seçin</option>
+                    <% product_types.forEach(product_type => { %>
+                        <option value="<%= product_type._id %>"><%= product_type.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label">Fiyat</label>
+                <input type="number" id="price" name="price"  class="form-control" required value="<%= typeof data !=="undefined"? data.price : "" %>" min="0">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <a href="/admin/products" class="btn btn-warning">Vazgeç</a>
+        </form>
+    </div>
+   </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+</body>
+</html>

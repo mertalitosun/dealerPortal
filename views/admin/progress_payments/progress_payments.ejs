@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Bayi Hakediş Listesi</h4>
+        
+        <div class="dealers-content mt-3">
+            <div class="">
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <form id="filterForm" method="get" action="/admin/progress-payments">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                                    <input type="date" id="startDate" name="startDate" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                                    <input type="date" id="endDate" name="endDate" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="status" class="form-label">Durum</label>
+                                    <select id="status" name="status" class="form-select">
+                                        <option value="">Tüm Durumlar</option>
+                                        <option value="true">Ödendi</option>
+                                        <option value="false">Ödenmedi</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3 d-flex align-items-end justify-content-between">
+                                    <button type="submit" class="btn btn-danger">Filtrele</button>
+                                    <a href="/admin/progress-payments" class="btn btn-primary">Sıfırla</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-4 d-flex align-items-center justify-content-center">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <input type="text" id="searchInput" class="form-control" placeholder="Ara...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+                <div>Toplam Hakediş: <%= totalprogressPayments %></div>
+                <div>Ödenecek Hakediş: <%= unpaidPayment %></div>
+                <div>Ödenen Hakediş: <%= completedPayment %></div>
+            </div>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <th>Bayi</th>
+                    <th>Tarih</th>
+                    <th>Hakediş</th>
+                    <th>Durum</th>
+                </thead>
+                <tbody id="tableBody">
+                    <% progressPayments.forEach(progressPayment => { %>
+                        <tr data-id="<%= progressPayment._id %>">
+                            <td><a href="/admin/dealer/details/<%= progressPayment.dealerId.dealerCode%>"><%= progressPayment.dealerId.firstName + " " + progressPayment.dealerId.lastName %></a></td>
+                            <td><% const date = new Date(progressPayment.date); %>
+                                <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %></td>
+                            <td>₺<%= progressPayment.payment %></td>
+                            <td>
+                                <select class="status-select text-dark border  ms-auto me-auto">
+                                    <option value="true" <%= progressPayment.status ? 'selected' : '' %>>Ödendi</option>
+                                    <option value="false" <%= !progressPayment.status ? 'selected' : '' %>>Ödenmedi</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            var filter = document.getElementById('searchInput').value.toLowerCase();
+
+            if(filter != ""){
+                fetch(`/admin/progress-payments?query=${filter}`)
+                .then(response => response.json())
+                .then(data => {
+                    var tbody = document.getElementById('tableBody');
+                    tbody.innerHTML = '';
+
+                    data.progressPayments.forEach(progressPayment => {
+                        var row = document.createElement('tr');
+                        row.setAttribute('data-id', progressPayment._id);
+                        var createdAt = new Date(progressPayment.date);
+                        row.innerHTML = `
+                            <td>
+                                <a href="/admin/dealer/details/${progressPayment.dealerId.dealerCode} %>">${progressPayment.dealerId.firstName + " " + progressPayment.dealerId.lastName}</a>
+                            </td>
+                            <td>
+                                ${createdAt.getDate().toString().padStart(2, "0")}/${(createdAt.getMonth() + 1).toString().padStart(2, "0")}/${createdAt.getFullYear()}
+                            </td>
+                            <td>
+                                ₺${progressPayment.payment}
+                            </td>
+                            <td>
+                                <select class="status-select text-dark border  ms-auto me-auto" style="width: 40%;">
+                                    <option value="true" ${progressPayment.status ? 'selected' : '' }>Ödendi</option>
+                                    <option value="false" ${!progressPayment.status ? 'selected' : ''}>Ödenmedi</option>
+                                </select>
+                            </td>
+                            
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            
+        });
+    </script>
+    <script>
+        document.getElementById('tableBody').addEventListener('change', function(event) {
+            if (event.target.classList.contains('status-select')) {
+                var row = event.target.closest('tr');
+                var id = row.getAttribute('data-id');
+                var status = event.target.value === 'true'; 
+    
+                fetch(`/admin/progress-payments/${id}`, {
+                    method: 'PUT', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Durum başarıyla güncellendi.');
+                    } else {
+                        console.error('Güncelleme hatası:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+   <div class="content">
+    <div class="container mt-5 ">
+        <h4 class="text-center">Ödeme Linki Oluştur</h4>
+        
+        <% if (existingPaymentLinks.length > 0) { %>
+            <div class="alert alert-danger mt-5" role="alert">
+                Birden fazla aktif ödeme link oluşturamazsınız.
+            </div>
+            <% if (isAdmin) { %>
+                <a href="/admin/purchases" class="btn btn-primary">Geri Dön</a>
+            <% } %>
+            <% if (isDealer) { %>
+                <a href="/user/purchases" class="btn btn-primary">Geri Dön</a>
+            <% } %>
+        <% }else{ %>
+            <form method="post">
+                <% if ( typeof purchase !== 'undefined' && purchase && purchase.type === "Kontör") { %> 
+                    <div class="mb-3">
+                        <label for="integrator" class="form-label">Entagratör</label>
+                        <select id="integrator" name="integrator" class="form-select" required>
+                            <option value="">Bir Entagratör seçin</option>
+                            <% integrators.forEach(integrator => { %>
+                                <option value="<%= integrator.name %>"><%= integrator.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="piece" class="form-label">Adet</label>
+                        <input type="number" id="piece" name="piece"  class="form-control" required value="<%= typeof data !=="undefined"? data.piece : "" %>">
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="unitPrice" class="form-label">Birim Fiyatı</label>
+                        <input type="number" id="unitPrice" name="unitPrice" step="0.1"  class="form-control" required value="<%= typeof data !=="undefined"? data.unitPrice : "" %>">
+                    </div>
+        
+                    <div class="mb-3">
+                        <label for="giftRate" class="form-label">Hediye Oranı</label>
+                        <input type="number" id="giftRate" name="giftRate"  class="form-control">
+                    </div>
+        
+                    <div class="mb-3">
+                        <label for="giftPiece" class="form-label">Hediye Miktarı</label>
+                        <input type="number" id="giftPiece" name="giftPiece" class="form-control">
+                    </div>
+                    
+                <% } else { %>
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Ürün Adı</label>
+                        <input type="text" id="productName" name="productName"  class="form-control"  value="<%= purchase && purchase.name ? purchase.name : '' %>" disabled>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Ürün Fiyatı</label>
+                        <input type="number" id="productPrice" name="productPrice"  class="form-control" required>
+                    </div>
+                <% } %>
+                <div class="totalAmount mb-1 text-secondary"></div>
+                <input type="hidden" id="hiddenTotalAmount" name="totalAmount">
+                <button type="submit" class="btn btn-primary">Link Oluştur</button>
+        </form>
+        <% } %>
+    </div>
+   </div>
+   
+
+    <div class="modal" tabindex="-1" id="paymentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <i class="bi bi-check-circle ms-auto me-auto mt-3" style="color: green; font-size: 70px;"></i>
+                <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+                <h2 class="my-3">Link Oluşturuldu!</h2>
+                <p>Ödeme linkini kaybetmeyiniz 24 saat geçerlidir.</p>
+                <p id="paymentLink"></p>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <% if (isAdmin) { %>
+                        <a href="/admin/purchases" class="btn btn-primary">Ok</a>
+
+                    <% } %>
+                    <% if (isDealer) { %>
+                        <a href="/user/purchases" class="btn btn-primary">Ok</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+
+    <script>
+        const productPrice = document.getElementById("productPrice");
+        const piece = document.getElementById("piece");
+        const unitPrice = document.getElementById("unitPrice");
+        const hiddenTotalAmount = document.getElementById("hiddenTotalAmount");
+        const totalAmount = document.querySelector(".totalAmount");
+        
+        const giftPiece = document.getElementById("giftPiece");
+        const giftRate = document.getElementById("giftRate");
+
+        const calculateTotalAmount = () =>{
+            if(piece && unitPrice && giftPiece && giftRate){
+                const pieceValue = parseFloat(piece.value) || 0
+                const unitPriceValue = parseFloat(unitPrice.value) || 0 
+                const total = pieceValue * unitPriceValue;
+                totalAmount.innerHTML = `Toplam Tutar: ₺${total.toFixed(2)}` 
+                hiddenTotalAmount.value = total.toFixed(2) 
+            }else{
+                const productPriceValue = parseFloat(productPrice.value) || 0
+                totalAmount.innerHTML = `Toplam Tutar: ₺${productPriceValue}`
+                hiddenTotalAmount.value = productPriceValue.toFixed(2);
+            }
+            
+        }
+
+        const toggleGiftFields = () =>{
+
+            if(giftPiece.value.trim() !== ""){
+                giftRate.disabled = true
+            }else{
+                giftRate.disabled = false
+            }
+
+            if(giftRate.value.trim()!== ""){
+                giftPiece.disabled = true
+            }else{
+                giftPiece.disabled = false
+            }
+        }
+        
+        if(piece && unitPrice && giftPiece && giftRate){
+            piece.addEventListener('input', calculateTotalAmount);
+            unitPrice.addEventListener('input', calculateTotalAmount);
+            giftPiece.addEventListener('input', toggleGiftFields);
+            giftRate.addEventListener('input', toggleGiftFields);
+        }else{
+            productPrice.addEventListener('input', calculateTotalAmount);
+        }
+       
+
+        const paymentLink = document.getElementById("paymentLink");
+
+        const showModal = (link) => {
+            paymentLink.innerText = link;
+            new bootstrap.Modal(document.getElementById("paymentModal")).show();
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const link = urlParams.get('link');
+       
+        if (link) {
+            showModal(link);
+        }
+    </script>
+</body>
+</html>

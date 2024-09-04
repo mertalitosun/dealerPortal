@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %>
+    <link rel="stylesheet" href="/static/css/auth.css">
+
+<body class="login-container">
+    <div class="container ">
+        <div class="login-wrapper">
+            <div class="login-header">
+                <% if (typeof message != "undefined") { %>
+                    <div class="alert alert-warning">
+                        <%= message %>
+                    </div>
+                <% } %>
+                <h2>Giriş Yap</h2>
+            </div>
+            <form class="login-form" method="post">
+                <div class="input-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" id="email" name="email" placeholder="E-posta adresinizi girin" required>
+                </div>
+                <div class="input-group password-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" name="password" placeholder="Şifrenizi girin" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <!-- Göz simgesi SVG olarak eklendi -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye">
+                            <path d="M22 12c-2.6-4.7-7.2-8-10-8s-7.4 3.3-10 8c2.6 4.7 7.2 8 10 8s7.4-3.3 10-8zm-10 4c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                </div>
+                
+                <button type="submit" class="login-btn">Giriş Yap</button>
+                <div class="login-footer">
+                    <a href="/forgot-password">Şifremi unuttum</a> |
+                    <a href="/register">Hesap oluştur</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('password');
+            var toggleIcon = document.querySelector('.toggle-password svg');
+            
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.setAttribute('stroke', '#38b6e4');
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.setAttribute('stroke', '#333');
+            }
+        }
+    </script>
+</body>
+</html>

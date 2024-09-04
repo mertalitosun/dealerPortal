@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+    <link rel="stylesheet" href="/static/css/details.css">
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-end">
+                <a href="/customer/edit/<%= customer.customerCode %>" class="btn edit"><i class="bi bi-pencil-square"></i> </a>
+            </div>
+        </div>
+        <div class="dealers-details-content p-5 table-responsive">
+            
+            <table class="table table-borderless">
+                <thead>
+                    <% if (isAdmin) { %>
+                    <th>Bayi</th>
+                    <% } %>
+                    <th>Müşteri Kodu</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Telefon</th>
+                    <th>Şirket</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <% if (isAdmin) { %>
+                        <td><a href="/admin/dealer/details/<%= customer.addedBy.dealerCode %>"><%= customer.addedBy.firstName %> <%= customer.addedBy.lastName %></a></td>
+                        <% } %>
+                        <td><%= customer.customerCode %></td>
+                        <td><%= customer.firstName %></td>
+                        <td><%= customer.lastName %></td>
+                        <td><%= customer.phone %></td>
+                        <td><%= customer.organization %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="text-center mt-5">Siparişler</h4> 
+        <hr>
+        <% if (purchases.length > 0) { %>
+            <table class="table table-hover mt-5">
+                <thead>
+                    <th>Durum</th>
+                    <th>Kod</th>
+                    <th>Hizmet</th>
+                    <th>(₺) Fiyat</th>
+                    <th>Satın Alma Tarihi</th>
+                </thead>
+                <tbody>
+                    <% purchases.forEach(purchase => { %>
+                        <tr>
+                            <td>
+                                <span class="status 
+                                    <%= purchase.status == "Onay Bekliyor" ? "bg-warning" :
+                                        purchase.status == "Tamamlandı" ? "bg-success" :
+                                        purchase.status == "Onaylandı" ? "bg-info" :
+                                        purchase.status == "İşlemde" ? "bg-primary" :
+                                        purchase.status == "İptal Edildi" ? "bg-secondary" :
+                                        purchase.status == "İade Edildi" ? "bg-danger" :
+                                        "bg-secondary" %>">
+                                    <%= purchase.status %>
+                                </span>
+                            </td>
+                            <td><%= purchase.purchaseCode %></td>
+                            <td><%= purchase.name %></td>
+                            <td>₺<%= purchase.price %></td>
+                            <td>
+                                <% const date = new Date(purchase.purchaseDate); %>
+                                <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else{%>
+            <div class="d-flex align-items-center flex-column dealers-details-content p-3">
+                <h3>Henüz sipariş yok</h3>
+                <% if (isAdmin) { %>
+                <a href="/admin/purchase/create" class="btn customerAdd">Sipariş Oluştur</a>
+                <% } %>
+                <% if (isDealer) { %>
+                <a href="/user/purchase/create" class="btn customerAdd">Sipariş Oluştur</a>
+                <% } %>
+            </div>
+        <% } %>
+      
+        <%- include('../../partials/pagination') %>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+
+</body>
+</html>

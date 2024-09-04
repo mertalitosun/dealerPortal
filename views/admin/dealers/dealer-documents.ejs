@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1 mb-5">Bayi Evrakları</h4>
+        
+        <div class="dealers-content mt-3">
+            <div class="col-12 d-flex justify-content-end">
+                <% if (isAdmin) { %>
+                <a href="/admin/dealer/document/add/<%= dealer._id %>" class="btn edit">Evrak Ekle </a>
+                <% } %>
+            </div>
+            <table class="table table-hover mt-5">
+                <thead>
+                    <th>Tarih</th>
+                    <th>Evrak Adı</th>
+                </thead>
+                <tbody>
+                    <% documents.forEach(document => { %>
+                        <tr>
+                            <td>
+                                <% const date = new Date(document.documentDate); %>
+                                <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %>
+                            </td>
+                            <td><a href="/<%= document.url %>" target="_blank"><%= document.name %></a></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <%- include('../../partials/pagination') %>
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+</body>
+</html>

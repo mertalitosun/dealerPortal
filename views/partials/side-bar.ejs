@@ -1,0 +1,111 @@
+<div class="sidebar d-none d-md-block">
+  <div class="sideBar-logo">
+    LOGO
+  </div>
+    <ul class="nav flex-column">
+        <% if (isAdmin) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/index"><i class="bi bi-house me-2"></i> Anasayfa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/dealers"><i class="bi bi-shop-window me-2"></i> Bayiler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/customers"><i class="bi bi-people-fill me-2"></i> Müşteriler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/products"><i class="bi bi-columns-gap me-2"></i> Ürünler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/purchases"><i class="bi bi-bag me-2"></i> Satışlar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/payment-transactions"><i class="bi bi-wallet-fill me-2"></i> Ödemeler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/progress-payments"><i class="bi bi-wallet me-2"></i> Hakedişler</a>
+            </li>
+        <% } %>
+       <% if (isDealer) { %>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/profile"><i class="bi bi-person-circle me-2"></i> Profil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/customers"><i class="bi bi-people-fill me-2"></i> Müşteriler</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/subDealers"><i class="bi bi-houses me-2"></i> Alt Bayiler</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/purchases"><i class="bi bi-bag me-2"></i> Satışlar</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/payment-transactions"><i class="bi bi-wallet-fill me-2"></i> Ödemeler</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/user/progress-payments"><i class="bi bi-wallet me-2"></i> Hakedişler</a>
+        </li>
+       <% } %>
+        <li class="nav-item mt-auto">
+            <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-in-right me-2"></i> Çıkış Yap</a>
+        </li>
+    </ul>
+</div>
+
+<button class="btn d-md-none p-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+    LOGO/MARKA
+</button>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasMenuLabel" class="brand">LOGO/MARKA</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Kapat"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <% if (isAdmin) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/index"><i class="bi bi-house me-2"></i> Anasayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dealers"><i class="bi bi-shop-window me-2"></i> Bayiler</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/products"><i class="bi bi-columns-gap me-2"></i> Ürünler</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/purchases"><i class="bi bi-bag me-2"></i> Satışlar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/payment-transactions"><i class="bi bi-wallet-fill me-2"></i> Ödemeler</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/progress-payments"><i class="bi bi-wallet me-2"></i> Hakedişler</a>
+                </li>
+            <% } %>
+           <% if (isDealer) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/profile"><i class="bi bi-person-circle me-2"></i> Profil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/customers"><i class="bi bi-people-fill me-2"></i> Müşteriler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/subDealers"><i class="bi bi-houses me-2"></i> Alt Bayiler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/purchases"><i class="bi bi-bag me-2"></i> Satışlar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/payment-transactions"><i class="bi bi-wallet-fill me-2"></i> Ödemeler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/progress-payments"><i class="bi bi-wallet me-2"></i> Hakedişler</a>
+            </li>
+           <% } %>
+           <li class="nav-item mt-auto">
+            <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-in-right me-2"></i> Çıkış Yap</a>
+        </li>
+        </ul>
+    </div>
+</div>

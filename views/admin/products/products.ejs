@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Ürün Listesi</h4>
+        
+        <div class="dealers-content mt-3">
+            <div class="d-flex justify-content-end">
+                <a href="/admin/product/create" class="btn customerAdd">Ürün Ekle <i class="bi bi-plus-circle"></i></a>
+            </div>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <th>Kod</th>
+                    <th>Ürün Tipi</th>
+                    <th>Ürün Adı</th>
+                    <th>(₺) Fiyat</th>
+                    <th>Detay</th>
+                </thead>
+                <tbody>
+                    <% products.forEach(product => { %>
+                        <tr>
+                            <td><%= product.productCode %></td>
+                            <td><%= product.type.name %></td>
+                            <td><%= product.name %></td>
+                            <td>₺<%= product.price %></td>
+                            <td><a href="/admin/product/edit/<%= product.productCode %>" class="review"><i class="bi bi-pencil-square"></i>  Düzenle</a></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <%- include('../../partials/pagination') %>
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+
+</body>
+</html>

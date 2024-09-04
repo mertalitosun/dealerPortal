@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Hakediş Listesi</h4>
+        
+        <div class="dealers-content mt-3">
+            <div class="d-flex justify-content-between">
+                <form id="filterForm" method="get" action="/user/progress-payments">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" id="endDate" name="endDate" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="status" class="form-label">Durum</label>
+                            <select id="status" name="status" class="form-select">
+                                <option value="">Tüm Durumlar</option>
+                                <option value="true">Ödendi</option>
+                                <option value="false">Ödenmedi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3 d-flex align-items-end justify-content-between">
+                            <button type="submit" class="btn btn-danger">Filtrele</button>
+                            <a href="/user/progress-payments" class="btn btn-primary">Sıfırla</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <th>Tarih</th>
+                    <th>Hakediş</th>
+                    <th>Durum</th>
+                </thead>
+                <tbody id="tableBody">
+                    <% progressPayments.forEach(progressPayment => { %>
+                        <tr data-id="<%= progressPayment._id %>">
+                            <td><% const date = new Date(progressPayment.date); %>
+                                <%= date.getDate().toString().padStart(2, '0') %>/<%= (date.getMonth() + 1).toString().padStart(2, '0') %>/<%= date.getFullYear() %></td>
+                            <td>₺<%= progressPayment.payment %></td>
+                            <td>
+                                <%= progressPayment.status ? "Ödendi" : "Ödenmedi" %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+</body>
+</html>

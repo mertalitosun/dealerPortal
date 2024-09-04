@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+    <link rel="stylesheet" href="/static/css/details.css">
+
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <div class="dealers-details-content p-5">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                    <a href="/user/password-change/<%= dealer.dealerCode %>" class="btn">Şifre Değiştir </a>
+                </div>
+            </div>
+            <div class="row dealer-profile-details">
+                <div class="col-12 col-md-4 profile-details">
+                    <ul>
+                        <li><b>Bayi Kodu:</b> <%= dealer.dealerCode %></li>
+                        <li><b>Ad:</b> <%= dealer.firstName %></li>
+                        <li><b>Soyad:</b> <%= dealer.lastName %></li>
+                        <li><b>Telefon:</b> <%= dealer.phone %></li>
+                        <li><b>E-Posta:</b> <%= dealer.email %></li>
+                        <li><b>Sözleşme:</b> <span class="<%= dealer.isContract ? "text-success" : "text-danger" %>"><%= dealer.isContract ? "İmzalandı" : "İmzalanmadı" %></span></li>
+                        <% if (isAdmin) { %>
+                            <% if (dealer.referenceBy) { %>
+                                <li><b>Referans Bayi:</b> <a href="/admin/dealer/details/<%= dealer.referenceBy.dealerCode %>"><%= dealer.referenceBy.firstName + " " + dealer.referenceBy.lastName %></a></li>
+                            <% } %>
+                        <% } %>
+                        <li><a href="/dealer/documents/<%= dealer._id %>">Evraklar</a></li>
+
+                    </ul>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="title"><b>Durum</b></div>
+                            <div><span class="status <%= dealer.status ? "active-status" : "inActive-status" %>"><%= dealer.status ? "Aktif" : "Pasif" %></span></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>Durum Açıklaması</b></div>
+                            <div><%= dealer.statusDescription %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>Rol/Roller</b></div>
+                            <div>
+                                <% dealer.roles.forEach(role => { %>
+                                    <li><%= role.name == "dealer" ? "Bayi" : role.name == "subDealer" ? "Alt Bayi" : ""%></li>
+                                <% }) %>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="title"><b>(%) Bayi Komisyon Oranı</b></div>
+                            <div>%<%= dealer.dealerCommission %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>(%) Alt Bayi Komisyon oranı</b></div>
+                            <div>%<%= dealer.subDealerCommission %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>(₺) Bayi Müşterileri Hakediş</b></div>
+                            <div>₺<%= monthlyTotal %></div>
+                        </div>
+                    </div>
+        
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="title"><b>SMM Odası</b></div>
+                            <div><%= dealer.smmRoom %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>SMM Oda Numarası</b></div>
+                            <div><%= dealer.smmRoomNumber %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="title"><b>(₺) Alt Bayi Müşterileri Hakediş</b></div>
+                            <div>₺<%= monthlySubTotal %></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchases -->
+        <form method="get" action="/user/profile/" class="mt-5">
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end justify-content-between">
+                    <button type="submit" class="btn btn-primary">Filtrele</button>
+                    <a href="/user/profile" class="btn btn-danger">Sıfırla</a>
+                </div>
+            </div>
+        </form>
+        <% if (purchases.length > 0) { %>
+            <h4 class="text-center mt-5">Satışlar</h4>
+            <hr>
+            <% if (startDate && endDate) { %>
+                <div class="alert alert-success">
+                    <% function formatDate(date) {
+                        var splitDate = date.split('-'); 
+                        var day = splitDate[2];
+                        var month = splitDate[1];
+                        var year = splitDate[0];
+                    
+                        return day + '.' + month + '.' + year;
+                      }  %>
+                <div class="filterDate d-flex justify-content-center mb-3"><%= formatDate(startDate) %> / <%= formatDate(endDate) %> Tarihleri arasındaki hakedişiniz.</div>
+                        <div class="d-flex justify-content-around">
+                            <div class="dealerCommission">
+                                <div class="title"><b>Bayi Müşterileri Hakediş: ₺<%= totalCommission %></b></div>
+                            </div>
+                            <div class="subDealerCommission">
+                                <div class="title"><b>Alt Bayi Müşterileri Hakediş: ₺<%= totalSubCommission %></b></div>
+                            </div>
+                        </div>
+                </div>
+            <% } %>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <th>DURUM</th>
+                        <th>ODEME DURUMU</th>
+                        <th>HIZMET</th>
+                        <th>SATIN ALMA TARIHI</th>
+                        <th>FIYAT</th>
+                        <th>MUSTERI</th>
+                    </thead>
+                    <tbody>
+                        <% purchases.forEach(purchase => { %>
+                            <tr>
+                                
+                                <td><%= purchase.status%></td>
+                                <td><%= purchase.paymentStatus %></td>
+                                <td><%= purchase.name %></td>
+                                <td>
+                                    <% const createdAt = new Date (purchase.purchaseDate) %>
+                                    <%= createdAt.getDate().toString().padStart(2,"0")%>/<%= (createdAt.getMonth() + 1).toString().padStart(2,"0") %>/<%= createdAt.getFullYear() %>
+                                </td>
+                                <td><%= purchase.price %></td>
+                                <td><a href="/customer/details/<%=  purchase.customer.customerCode %>"><%= purchase.customer.firstName %> <%= purchase.customer.lastName %></a></td>
+                            </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+           
+        <% } else {%>
+            <p class="text-center mt-3">Kayıt Bulunamadı!</p>
+        <% } %>
+        <%- include('../../partials/pagination') %>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script src="/static/js/inputDate.js"></script>
+</body>
+</html>

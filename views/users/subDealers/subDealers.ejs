@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <h4 class="text-center mt-1">Alt Bayi Listesi</h4>
+        <div class="search-container mt-3 d-flex justify-content-start">
+            <div>
+                <input type="text" id="searchInput" class="form-control" placeholder="Ara...">
+            </div>
+        </div>
+        <hr>
+        <div class="dealers-content mt-5 table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th>Durum</th>
+                    <th>Kod</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Telefon</th>
+                    <th>Email</th>
+                </thead>
+                <tbody id="tableBody">
+                    <% dealers.forEach(dealer => { %>
+                        <tr>
+                            <td><span class="status <%= dealer.status ? "active-status" : "inActive-status" %>"><%= dealer.status ? "Aktif" : "Pasif" %></span></td>
+                            <td><%= dealer.dealerCode %></td>
+                            <td><%= dealer.firstName %></td>
+                            <td><%= dealer.lastName %></td>
+                            <td><%= dealer.phone %></td>
+                            <td><%= dealer.email %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <%- include('../../partials/pagination') %>
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+               var filter = document.getElementById('searchInput').value.toLowerCase();
+   
+               fetch(`/user/subDealers?query=${filter}`)
+                   .then(response => response.json())
+                   .then(data => {
+                       var tbody = document.getElementById('tableBody');
+                       tbody.innerHTML = '';
+   
+                       data.dealers.forEach(dealer => {
+                           var row = document.createElement('tr');
+                           row.innerHTML = `
+                           <td><span class="status ${dealer.status ? "active-status" : "inActive-status"}">${dealer.status ? "Aktif" : "Pasif"}</span></td>
+                            <td>${dealer.dealerCode}</td>
+                            <td>${dealer.firstName}</td>
+                            <td>${dealer.lastName}</td>
+                            <td>${dealer.phone}</td>
+                            <td>${dealer.email}</td>
+                           `;
+                           tbody.appendChild(row);
+                       });
+                   })
+                   .catch(error => console.error('Error:', error));
+           });
+    </script>
+</body>
+</html>

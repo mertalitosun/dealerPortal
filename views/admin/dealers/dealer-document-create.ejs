@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <div class="container mt-5">
+            <h4 class="text-center">Belge Ekle</h4>
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Belge Adı</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">Dosya Seç</label>
+                    <input type="file" id="file" name="file" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="documentDate" class="form-label">Belge Eklenme Tarihi</label>
+                    <input type="date" id="documentDate" name="documentDate" class="form-control" required >
+                </div>
+
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a href="/admin/dealer/documents/<%= dealer._id %>" class="btn btn-warning">Vazgeç</a>
+            </form>
+        </div>
+    </div>
+  
+    <%- include('../../partials/script') %>
+    <script src="/static/js/style.js"></script>
+    <script>
+        function getTodayDate(day) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const originalDay = String(today.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day ? day : originalDay}`;
+        }
+        document.getElementById("documentDate").value = getTodayDate()
+    </script>
+</body>
+</html>

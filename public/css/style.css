@@ -1,0 +1,142 @@
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #283045;
+    color: white;
+    padding: 20px;
+    z-index: 1000; 
+}
+a{
+    text-decoration: none !important;
+}
+.sidebar a {
+    color: #abadb3;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+.sidebar ul li{
+    margin-bottom: 10px;
+}
+.sidebar ul li{
+    position: relative;
+}
+.sidebar ul li::before{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #3a9dd3;
+    width: 0%;
+    height: 1px;
+    transition: .5s;
+}
+.sidebar ul li:hover::before{
+    width: 100%;
+    height: 1px;
+}
+.active{
+    color: #fff !important;
+    border-bottom: 1px solid #3a9dd3 !important;
+}
+.brand {
+    color: #3a9dd3;
+}
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+.offcanvas {
+    z-index: 1050; 
+}
+
+/* status */
+.status{
+    color: #fefefe;
+    padding: .2rem .5rem;
+    border-radius: 1rem;
+}
+.active-status{
+    background-color: #06D001;
+}
+.inActive-status{
+    background-color: #ff0000;
+}
+/* tablo/buton */
+table th, table td{
+    font-size: 13px !important;
+    text-align: center;
+ }
+ 
+.customerAdd, .addOrder{
+    font-size: 20px !important;
+    color: #06D001 !important;
+}
+.dealerAdd{
+    font-size: 20px !important;
+    color: #6EACDA !important;
+}
+.edit{
+    font-size: 20px !important;
+    color: #03346E !important;
+}
+.review{
+    color: #03346E !important;
+}
+
+.errorPage .home-page{
+    color: #fff;
+    background: #82acdf;
+}
+.errorPage .home-page:hover{
+    color: #fff;
+    background: #6e96c8;
+}
+.errorPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh;
+}
+
+.errorPage .error-image {
+    max-width: 100%;
+    height: auto; 
+}
+.dropdown-menu .dropdown-item{
+    color: #000 !important;
+}
+.status-select{
+    border: none;
+    padding: 5px;
+    border-radius: .5rem;
+    color: #fff;
+}
+.required{
+    color: red;
+}
+
+/* .sideBar-logo{
+    width: 100px;
+    height: 100px;
+} */
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        display: none;
+    }
+    .content {
+       margin: 0 !important;
+    }
+}
+
+

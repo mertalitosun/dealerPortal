@@ -1,0 +1,24 @@
+.progressPaymentContainer .cardCol{
+   margin-top: 10px;
+}
+.progressPaymentContainer .card{
+    padding: 10px 0px;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
+}
+
+.progressPaymentContainer p{
+    text-align: center;
+}
+
+.progressPaymentContainer p:last-child{
+    font-weight: 700;
+}
+.completed{
+    background-color: rgb(51, 222, 51);
+    color: #fff;
+}
+
+.unpaid{
+    background-color: red;
+    color: #fff;
+}

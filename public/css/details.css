@@ -1,0 +1,40 @@
+.dealers-details-content{
+    box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+    border-radius: .5rem;
+}
+
+.dealers-details-content .row span{
+    word-break: break-all;
+}
+.dealers-details-content .row p{
+    margin: 0 !important;
+}
+
+.dealers-details-content .row .col-12{
+    margin-bottom: 10px;
+}
+
+/* .dealers-details-content table, .dealers-details-content tr, .dealers-details-content td, .dealers-details-content th{
+    background-color: #edeeee !important;
+} */
+.dealer-profile-details{
+    font-size: 13px;
+}
+.dealer-profile-details .profile-details{
+    display: flex;
+    align-items: center;
+    border-right: dotted #000;
+}
+.profile-details li{
+    margin-bottom: 20px;
+}
+.dealer-profile-details .col-md-4{
+    margin-bottom: 10px;
+}
+.dealer-profile-details .title{
+    margin-bottom: 5px;
+}
+li{
+    list-style-type: none;
+}

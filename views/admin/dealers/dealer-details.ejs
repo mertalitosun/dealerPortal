@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../partials/head') %>
+    <link rel="stylesheet" href="/static/css/details.css">
+</head>
+<body>
+    <%- include('../../partials/side-bar') %>
+    <div class="content">
+        <%- include('../../partials/dealer-profile-details') %>
+        
+        <form method="get" action="/admin/dealer/details/<%= dealer.dealerCode %>" class="mt-5">
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end justify-content-between">
+                    <button type="submit" class="btn btn-primary">Filtrele</button>
+                    <a href="/admin/dealer/details/<%= dealer.dealerCode %>" class="btn btn-danger">Sıfırla</a>
+                </div>
+            </div>
+        </form>
+        <% if (purchases.length > 0) { %>
+            <h4 class="text-center mt-5">Satışlar</h4>
+            <hr>
+            <% function formatDate(date) {
+                var splitDate = date.split('-'); 
+                var day = splitDate[2];
+                var month = splitDate[1];
+                var year = splitDate[0];
+            
+                return day + '.' + month + '.' + year;
+              }  %>
+              <% if (startDate && endDate) { %>
+                <div class="alert alert-success">
+                    <div class="filterDate d-flex justify-content-center mb-3"><%= formatDate(startDate)%> / <%= formatDate(endDate) %> Tarihleri arasındaki hakedişiniz.</div>
+                    <div class="d-flex justify-content-around">
+                        <div class="dealerCommission">
+                            <div class="title"><b>Bayi Müşterileri Hakediş: ₺<%=totalCommission  %></b></div>
+                        </div>
+                        <div class="subDealerCommission">
+                            <div class="title"><b>Alt Bayi Müşterileri Hakediş: ₺<%=totalSubCommission  %></b></div>
+                        </div>
+                    </div>
+                </div>
+              <% } %>
+                
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <th>DURUM</th>
+                        <th>ODEME DURUMU</th>
+                        <th>HIZMET</th>
+                        <th>SATIN ALMA TARIHI</th>
+                        <th>FIYAT</th>
+                    </thead>
+                    <tbody>
+                        <% purchases.forEach(purchase => { %>
+                                <tr>
+                                    
+                                    <td><%= purchase.status%></td>
+                                    <td><%= purchase.paymentStatus %></td>
+                                    <td><%= purchase.name %></td>
+                                    <td>
+                                        <% const createdAt = new Date (purchase.purchaseDate) %>
+                                        <%= createdAt.getDate().toString().padStart(2,"0")%>/<%= (createdAt.getMonth() + 1).toString().padStart(2,"0") %>/<%= createdAt.getFullYear() %>
+                                    </td>
+                                    <td><%= purchase.price %></td>
+                                </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+           
+        <% } else {%>
+            <p class="text-center mt-3">Kayıt Bulunamadı!</p>
+        <% } %>
+
+        <%- include('../../partials/pagination') %>
+
+    </div>
+    <%- include('../../partials/script') %>
+    <script src="/static/js/inputDate.js"></script>
+    <script src="/static/js/style.js"></script>
+</body>
+</html>

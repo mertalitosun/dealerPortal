@@ -20,7 +20,7 @@ Projenin çalıştırılması için aşağıdaki adımları izleyin.
 Öncelikle, projeyi bilgisayarınıza klonlayın veya zip dosyasını indirip çıkartın.
 
 ```bash
-git clone https://github.com/kullanıcı_adı/dealerPortal.git
+git clone https://github.com/mertalitosun/dealerPortal.git
 ```
 ### 2. Gerekli Bağımlılıkları Yükleyin
 

@@ -30,9 +30,10 @@ Proje dizinine gidin ve npm kullanarak bağımlılıkları yükleyin.
 npm install
 ```
 ### 2. Veritabanı Bağlantısını Yapılandırın
-- ```bash 
+ ```bash 
 data/db/config.js 
-``` dosyasında yer alan url değişkenini kendi MongoDB bağlantı URL'inizle değiştirin.
+``` 
+dosyasında yer alan url değişkenini kendi MongoDB bağlantı URL'inizle değiştirin.
 
 ```javascript
 const url = "mongodb://localhost:27017/dealerPortal";
